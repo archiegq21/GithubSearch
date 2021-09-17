@@ -21,6 +21,8 @@ object Libs {
         private const val material_version = "1.5.0-alpha02"
         const val material = "com.google.android.material:material:$material_version"
 
+        const val web_kit = "androidx.webkit:webkit:1.4.0"
+
         object Compose {
             const val compose_version = "1.1.0-alpha03"
             private const val navigation_compose_version = "2.4.0-alpha08"

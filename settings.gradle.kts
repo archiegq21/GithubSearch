@@ -8,5 +8,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "GithubSearch"
 include(
-        ":androidApp"
+    ":androidApp",
+    ":common",
 )

@@ -36,7 +36,6 @@ android {
         kotlinOptions {
             freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
         }
-
     }
 
     buildFeatures {
@@ -55,7 +54,8 @@ android {
 }
 
 dependencies {
-    implementation("androidx.webkit:webkit:1.4.0")
+    implementation(project(Module.common))
+
     coreLibraryDesugaring(Libs.Desugar.desugar_libs)
 
     // Jetpack
@@ -63,6 +63,7 @@ dependencies {
     implementation(Libs.Jetpack.activity)
     implementation(Libs.Jetpack.fragment)
     implementation(Libs.Jetpack.material)
+    implementation(Libs.Jetpack.web_kit)
 
     // Compose
     implementation(Libs.Jetpack.Compose.activity)
