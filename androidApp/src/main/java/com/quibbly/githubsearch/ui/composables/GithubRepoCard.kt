@@ -30,7 +30,7 @@ import com.quibbly.githubsearch.ui.assets.IssuesIcon
     ExperimentalAnimationApi::class,
 )
 @Composable
-fun GithubComposable(
+fun GithubRepoCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {

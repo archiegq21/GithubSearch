@@ -19,77 +19,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.quibbly.githubsearch.ui.GithubScreens
 import com.quibbly.githubsearch.ui.assets.Github
-import com.quibbly.githubsearch.ui.composables.GithubComposable
+import com.quibbly.githubsearch.ui.composables.GithubRepoCard
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SearchScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    val searchTextFieldInteractionSource = remember { MutableInteractionSource() }
-    val searchTextFieldFocused by searchTextFieldInteractionSource.collectIsFocusedAsState()
-    val searchCorners by animateIntAsState(targetValue = if (searchTextFieldFocused) 10 else 50)
-    val searchShape by remember { derivedStateOf { RoundedCornerShape(searchCorners) } }
     Scaffold(
         modifier = modifier,
         topBar = {
-            Surface(
-                modifier = Modifier.wrapContentHeight(),
-                elevation = 4.dp,
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            horizontal = 16.dp,
-                            vertical = 16.dp,
-                        ),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    Text(
-                        text = "Github Search",
-                        style = MaterialTheme.typography.h6,
-                    )
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(searchShape),
-                        value = "",
-                        onValueChange = { },
-                        interactionSource = searchTextFieldInteractionSource,
-                        maxLines = 1,
-                        label = {
-                            Text("Enter Keyword")
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Rounded.Search,
-                                contentDescription = "Clear Search",
-                            )
-                        },
-                        trailingIcon = {
-                            AnimatedVisibility(
-                                visible = "".isNotEmpty(),
-                                enter = fadeIn(),
-                                exit = fadeOut(),
-                            ) {
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Close,
-                                        contentDescription = "Clear Search",
-                                    )
-                                }
-                            }
-                        },
-                        shape = searchShape,
-                        colors = TextFieldDefaults.textFieldColors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                        )
-                    )
-                }
-            }
+            SearchTopBar(
+                modifier = Modifier,
+            )
         }
     ) {
         Crossfade(targetState = true) {
@@ -101,11 +45,80 @@ fun SearchScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     items(100) {
-                        GithubComposable(onClick = {})
+                        GithubRepoCard(onClick = {
+                            navController.navigate(GithubScreens.ViewRepo.route)
+                        })
                     }
                 }
                 false -> EmptyPlaceHolder(modifier = Modifier.fillMaxSize())
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun SearchTopBar(
+    modifier: Modifier = Modifier,
+) {
+    val searchTextFieldInteractionSource = remember { MutableInteractionSource() }
+    val searchTextFieldFocused by searchTextFieldInteractionSource.collectIsFocusedAsState()
+    val searchCorners by animateIntAsState(targetValue = if (searchTextFieldFocused) 10 else 50)
+    val searchShape by remember { derivedStateOf { RoundedCornerShape(searchCorners) } }
+
+    Surface(
+        modifier = modifier.wrapContentHeight(),
+        elevation = 4.dp,
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 16.dp,
+                ),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            Text(
+                text = "Github Search",
+                style = MaterialTheme.typography.h6,
+            )
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(searchShape),
+                value = "",
+                onValueChange = { },
+                interactionSource = searchTextFieldInteractionSource,
+                maxLines = 1,
+                label = {
+                    Text("Enter Keyword")
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Rounded.Search,
+                        contentDescription = "Clear Search",
+                    )
+                },
+                trailingIcon = {
+                    AnimatedVisibility(
+                        visible = "".isNotEmpty(),
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                contentDescription = "Clear Search",
+                            )
+                        }
+                    }
+                },
+                shape = searchShape,
+                colors = TextFieldDefaults.textFieldColors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                )
+            )
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.quibbly.githubsearch.ui.search.searchNavigation
+import com.quibbly.githubsearch.ui.view.viewRepoNavigation
 
 @Composable
 fun NavGraph(
@@ -16,6 +17,10 @@ fun NavGraph(
         startDestination = GithubScreens.Search.route,
     ) {
         searchNavigation(
+            navController = navController,
+            modifier = modifier,
+        )
+        viewRepoNavigation(
             navController = navController,
             modifier = modifier,
         )

@@ -55,6 +55,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.webkit:webkit:1.4.0")
     coreLibraryDesugaring(Libs.Desugar.desugar_libs)
 
     // Jetpack
