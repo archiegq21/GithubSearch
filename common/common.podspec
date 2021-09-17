@@ -1,17 +1,17 @@
 Pod::Spec.new do |spec|
     spec.name                     = 'common'
     spec.version                  = '1.0'
-    spec.homepage                 = ''
+    spec.homepage                 = 'https://quibbly.com'
     spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = ''
+    spec.summary                  = 'Common Library'
 
     spec.vendored_frameworks      = "build/cocoapods/framework/common.framework"
     spec.libraries                = "c++"
     spec.module_name              = "#{spec.name}_umbrella"
 
-                
+    spec.ios.deployment_target = '15'
 
                 
 

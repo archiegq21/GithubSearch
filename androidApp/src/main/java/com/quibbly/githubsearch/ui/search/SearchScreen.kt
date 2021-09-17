@@ -6,59 +6,100 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.quibbly.common.search.SearchState
 import com.quibbly.githubsearch.ui.GithubScreens
 import com.quibbly.githubsearch.ui.assets.Github
 import com.quibbly.githubsearch.ui.composables.GithubRepoCard
 
 @Composable
 fun SearchScreen(
+    searchQuery: String,
+    onSearchChanged: (String) -> Unit,
+    loadMore: () -> Unit,
+    searchState: SearchState,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
+    val lazyListState = rememberLazyListState()
     Scaffold(
         modifier = modifier,
         topBar = {
             SearchTopBar(
+                searchQuery = searchQuery,
+                onSearchChanged = onSearchChanged,
                 modifier = Modifier,
             )
-        }
+        },
     ) {
-        Crossfade(targetState = true) {
-            when (it) {
-                true -> LazyColumn(
+        Crossfade(targetState = searchState) {
+            when {
+                it.searchResult.isEmpty() && it.loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                it.searchResult.isNotEmpty() -> LazyColumn(
+                    state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    items(100) {
-                        GithubRepoCard(onClick = {
-                            navController.navigate(GithubScreens.ViewRepo.route)
-                        })
+                    searchState.searchResult.forEach { repo ->
+                        item {
+                            GithubRepoCard(
+                                repository = repo,
+                                onClick = {
+                                    navController.navigate(GithubScreens.ViewRepo.route)
+                                },
+                            )
+                        }
+                    }
+                    if (searchState.hasNextPage) {
+                        item(FooterId) {
+                            LoadingFooter(
+                                modifier = Modifier,
+                                loadMore = loadMore
+                            )
+                        }
                     }
                 }
-                false -> EmptyPlaceHolder(modifier = Modifier.fillMaxSize())
+                else -> EmptyPlaceHolder(modifier = Modifier.fillMaxSize())
             }
         }
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(
+    ExperimentalAnimationApi::class,
+    ExperimentalComposeUiApi::class,
+)
 @Composable
 private fun SearchTopBar(
+    searchQuery: String,
+    onSearchChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val searchTextFieldInteractionSource = remember { MutableInteractionSource() }
@@ -83,13 +124,21 @@ private fun SearchTopBar(
                 text = "Github Search",
                 style = MaterialTheme.typography.h6,
             )
+            val keyboardController = LocalSoftwareKeyboardController.current
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(searchShape),
-                value = "",
-                onValueChange = { },
+                value = searchQuery,
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { keyboardController?.hide() }
+                ),
+                onValueChange = onSearchChanged,
                 interactionSource = searchTextFieldInteractionSource,
+                singleLine = true,
                 maxLines = 1,
                 label = {
                     Text("Enter Keyword")
@@ -102,11 +151,13 @@ private fun SearchTopBar(
                 },
                 trailingIcon = {
                     AnimatedVisibility(
-                        visible = "".isNotEmpty(),
+                        visible = searchQuery.isNotEmpty(),
                         enter = fadeIn(),
                         exit = fadeOut(),
                     ) {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+                            onSearchChanged("")
+                        }) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
                                 contentDescription = "Clear Search",
@@ -154,3 +205,19 @@ private fun EmptyPlaceHolder(
         }
     }
 }
+
+@Composable
+fun LoadingFooter(
+    modifier: Modifier = Modifier,
+    loadMore: () -> Unit,
+) {
+    SideEffect(loadMore)
+    Box(
+        modifier = modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator()
+    }
+}
+
+private const val FooterId = "FooterId"

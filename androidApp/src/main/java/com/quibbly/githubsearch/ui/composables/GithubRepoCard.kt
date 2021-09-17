@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.StarOutline
+import androidx.compose.material.icons.rounded.Visibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -20,8 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import coil.transform.CircleCropTransformation
-import com.quibbly.githubsearch.ui.assets.ContributorsIcon
+import com.quibbly.common.domain.Repository
 import com.quibbly.githubsearch.ui.assets.ForkIcon
 import com.quibbly.githubsearch.ui.assets.IssuesIcon
 
@@ -31,6 +31,7 @@ import com.quibbly.githubsearch.ui.assets.IssuesIcon
 )
 @Composable
 fun GithubRepoCard(
+    repository: Repository,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -57,13 +58,13 @@ fun GithubRepoCard(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
                         Text(
-                            text = "square/retrofit",
+                            text = repository.fullname,
                             style = MaterialTheme.typography.h6,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
                         Text(
-                            "A type-safe HTTP client for Android and the JVM",
+                            text = repository.description,
                             style = MaterialTheme.typography.caption,
                             maxLines = 3,
                             overflow = TextOverflow.Ellipsis,
@@ -72,10 +73,7 @@ fun GithubRepoCard(
                     Spacer(modifier = Modifier.size(16.dp))
                     Image(
                         painter = rememberImagePainter(
-                            data = "https://www.example.com/image.jpg",
-                            builder = {
-                                transformations(CircleCropTransformation())
-                            }
+                            data = repository.owner.avatar_url,
                         ),
                         contentDescription = null,
                         modifier = Modifier
@@ -84,7 +82,7 @@ fun GithubRepoCard(
                             .background(Color.Gray)
                     )
                 }
-                Spacer(modifier = Modifier.size(8.dp))
+                Spacer(modifier = Modifier.size(16.dp))
                 AnimatedVisibility(visible = layoutWidth > 300.dp) {
                     Row(
                         modifier = Modifier
@@ -94,31 +92,31 @@ fun GithubRepoCard(
                     ) {
                         GithubMetrics(
                             modifier = Modifier.wrapContentSize(),
-                            icon = Icons.ContributorsIcon,
+                            icon = Icons.Rounded.Visibility,
                             contentDescription = "Contributors Count",
-                            label = "Contributors",
-                            value = "0",
+                            label = "Watchers",
+                            value = repository.watchersCount.toString(),
                         )
                         GithubMetrics(
                             modifier = Modifier.wrapContentSize(),
                             icon = Icons.IssuesIcon,
                             contentDescription = "Issues Count",
                             label = "Issues",
-                            value = "0",
+                            value = repository.issuesCount.toString(),
                         )
                         GithubMetrics(
                             modifier = Modifier.wrapContentSize(),
                             icon = Icons.Rounded.StarOutline,
                             contentDescription = "Stars Count",
-                            label = "Stars",
-                            value = "0",
+                            label = "Score",
+                            value = repository.score.toString(),
                         )
                         GithubMetrics(
                             modifier = Modifier.wrapContentSize(),
                             icon = Icons.ForkIcon,
                             contentDescription = "Forks Count",
                             label = "Forks",
-                            value = "0",
+                            value = repository.forksCount.toString(),
                         )
                     }
                 }

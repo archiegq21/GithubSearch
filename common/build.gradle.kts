@@ -12,6 +12,11 @@ android {
     defaultConfig {
         minSdk = Android.minSdkVersion
         targetSdk = Android.targetSdkVersion
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     sourceSets {
@@ -49,20 +54,15 @@ dependencies {
     coreLibraryDesugaring(Libs.Desugar.desugar_libs)
 }
 
-version = "1.0"
-
 kotlin {
     android()
     ios()
 
+    version = "1.0"
     cocoapods {
-        framework {
-            summary = "Common Library"
-            homepage = "www.quibbly.com"
-            baseName = "common"
-            isStatic = false
-            transitiveExport = true
-        }
+        ios.deploymentTarget = "15"
+        summary = "Common Library"
+        homepage = "https://quibbly.com"
     }
 
     sourceSets {
@@ -75,11 +75,6 @@ kotlin {
                 implementation(Libs.Kotlin.Ktor.logging)
 
                 implementation(Libs.Koin.core)
-
-                implementation(Libs.SqlDelight.runtime)
-                implementation(Libs.SqlDelight.coroutines_ktx)
-
-                implementation(Libs.MultipaltformSettings.no_args)
             }
         }
         val commonTest by getting
@@ -89,8 +84,6 @@ kotlin {
                 implementation(Libs.Kotlin.Coroutines.android)
                 implementation(Libs.Kotlin.Ktor.android_core)
                 implementation(Libs.Kotlin.Ktor.logback)
-
-                implementation(Libs.SqlDelight.android)
             }
         }
         val androidTest by getting {
@@ -102,8 +95,6 @@ kotlin {
             dependencies {
                 implementation(Libs.Kotlin.Ktor.ios_core)
                 implementation(Libs.Kotlin.Ktor.native_logging)
-
-                implementation(Libs.SqlDelight.ios)
             }
         }
         val iosTest by getting
