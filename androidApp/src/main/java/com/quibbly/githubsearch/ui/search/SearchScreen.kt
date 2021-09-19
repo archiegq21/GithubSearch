@@ -21,11 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.quibbly.common.domain.Repository
 import com.quibbly.common.search.SearchState
+import com.quibbly.githubsearch.R
 import com.quibbly.githubsearch.ui.GithubScreens
 import com.quibbly.githubsearch.ui.assets.Github
 import com.quibbly.githubsearch.ui.composables.GithubRepoCard
@@ -35,6 +38,8 @@ fun SearchScreen(
     searchQuery: String,
     onSearchChanged: (String) -> Unit,
     loadMore: () -> Unit,
+    retry: () -> Unit,
+    repositorySelected: (Repository) -> Unit,
     searchState: SearchState,
     navController: NavController,
     modifier: Modifier = Modifier,
@@ -72,21 +77,37 @@ fun SearchScreen(
                             GithubRepoCard(
                                 repository = repo,
                                 onClick = {
+                                    repositorySelected(repo)
                                     navController.navigate(GithubScreens.ViewRepo.route)
                                 },
                             )
                         }
                     }
-                    if (searchState.hasNextPage) {
-                        item(FooterId) {
-                            LoadingFooter(
-                                modifier = Modifier,
-                                loadMore = loadMore
-                            )
+                    when {
+                        searchState.error != null -> {
+                            item(ErrorFooterId) {
+                                ErrorFooter(
+                                    modifier = Modifier,
+                                    loading = searchState.loading,
+                                    retry = retry,
+                                )
+                            }
+                        }
+                        searchState.hasNextPage -> {
+                            item(FooterId) {
+                                LoadingFooter(
+                                    modifier = Modifier,
+                                    loadMore = loadMore
+                                )
+                            }
                         }
                     }
                 }
-                else -> EmptyPlaceHolder(modifier = Modifier.fillMaxSize())
+                else -> EmptyPlaceHolder(
+                    modifier = Modifier.fillMaxSize(),
+                    hasError = searchState.error != null,
+                    retry = retry,
+                )
             }
         }
     }
@@ -121,7 +142,7 @@ private fun SearchTopBar(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = "Github Search",
+                text = stringResource(R.string.github_search),
                 style = MaterialTheme.typography.h6,
             )
             val keyboardController = LocalSoftwareKeyboardController.current
@@ -141,12 +162,12 @@ private fun SearchTopBar(
                 singleLine = true,
                 maxLines = 1,
                 label = {
-                    Text("Enter Keyword")
+                    Text(stringResource(R.string.search_hint))
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Rounded.Search,
-                        contentDescription = "Clear Search",
+                        contentDescription = stringResource(R.string.search),
                     )
                 },
                 trailingIcon = {
@@ -160,7 +181,7 @@ private fun SearchTopBar(
                         }) {
                             Icon(
                                 imageVector = Icons.Rounded.Close,
-                                contentDescription = "Clear Search",
+                                contentDescription = stringResource(R.string.clear_search),
                             )
                         }
                     }
@@ -177,6 +198,8 @@ private fun SearchTopBar(
 @Composable
 private fun EmptyPlaceHolder(
     modifier: Modifier = Modifier,
+    hasError: Boolean,
+    retry: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -189,19 +212,29 @@ private fun EmptyPlaceHolder(
             Icon(
                 modifier = Modifier.size(75.dp),
                 imageVector = Icons.Github,
-                contentDescription = "No Result Found",
+                contentDescription = stringResource(id = R.string.no_results_found),
             )
             Spacer(modifier = Modifier.size(16.dp))
             Text(
-                text = "No Results Found",
+                text = if (hasError) {
+                    stringResource(id = R.string.default_error)
+                } else {
+                    stringResource(id = R.string.no_results_found)
+                },
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6,
             )
-            Text(
-                text = "Try a new Keyword?",
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.caption,
-            )
+            if (hasError) {
+                TextButton(onClick = retry) {
+                    Text(stringResource(id = R.string.try_again))
+                }
+            } else {
+                Text(
+                    text = stringResource(id = R.string.try_new_keyword),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.caption,
+                )
+            }
         }
     }
 }
@@ -221,3 +254,29 @@ fun LoadingFooter(
 }
 
 private const val FooterId = "FooterId"
+
+@Composable
+fun ErrorFooter(
+    modifier: Modifier = Modifier,
+    loading: Boolean = false,
+    retry: () -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        if (!loading) {
+            Text(
+                text = stringResource(id = R.string.default_error)
+            )
+            TextButton(onClick = retry) {
+                Text(stringResource(id = R.string.try_again))
+            }
+        } else {
+            CircularProgressIndicator()
+        }
+    }
+}
+
+private const val ErrorFooterId = "ErrorFooterId"

@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">GithubSearch</string>
+
+    <string name="github_search">Github Search</string>
+    <string name="search_hint">Enter Keyword</string>
+    <string name="clear_search">Clear Search</string>
+    <string name="search">Search</string>
+    <string name="no_results_found">No Result Found</string>
+    <string name="default_error">Something didn\'t go well</string>
+    <string name="try_again">Try again?</string>
+    <string name="try_new_keyword">Try a new Keyword?</string>
 </resources>

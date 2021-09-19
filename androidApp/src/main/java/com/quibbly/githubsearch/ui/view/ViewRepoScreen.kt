@@ -11,9 +11,11 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebSettingsCompat.FORCE_DARK_OFF
 import androidx.webkit.WebSettingsCompat.FORCE_DARK_ON
 import androidx.webkit.WebViewFeature
+import com.quibbly.common.domain.Repository
 
 @Composable
 fun ViewRepoScreen(
+    repository: Repository?,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -35,6 +37,8 @@ fun ViewRepoScreen(
             }
         }
     ) {
-        it.loadUrl("https://github.com/square/retrofit")
+        repository?.run {
+            it.loadUrl(url)
+        }
     }
 }

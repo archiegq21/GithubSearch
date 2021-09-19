@@ -24,6 +24,7 @@ fun NavGraph(
             modifier = modifier,
         )
         viewRepoNavigation(
+            searchStore = searchStore,
             navController = navController,
             modifier = modifier,
         )

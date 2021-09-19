@@ -22,6 +22,8 @@ fun NavGraphBuilder.searchNavigation(
             searchQuery = searchQuery,
             onSearchChanged = searchStore::onSearchQueryChanged,
             loadMore = searchStore::loadNextPage,
+            retry = searchStore::retry,
+            repositorySelected = searchStore::selectedRepository,
             searchState = searchState,
             navController = navController,
             modifier = modifier,
