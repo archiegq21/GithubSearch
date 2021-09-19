@@ -1,7 +1,7 @@
 # GithubSearch
 Application which allows a user to search through a Github Repositories
 
-![Android Screen Demo](assets/screen_demo.gif)
+<img src="/assets/screen_demo.gif" width="25%" height="25%"/>
 
 ## Project Details
 This project was setup with (Kotlin Multiplatform Mobile)[https://kotlinlang.org/docs/multiplatform.html] in mind.
