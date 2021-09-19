@@ -60,7 +60,7 @@ object Libs {
         }
 
         object Ktor {
-            private const val ktor_version = "1.6.2"
+            private const val ktor_version = "1.6.3"
             private const val logback_version = "1.2.5"
 
             const val core = "io.ktor:ktor-client-core:$ktor_version"
@@ -73,24 +73,6 @@ object Libs {
             const val native_logging = "io.ktor:ktor-client-logging-native:1.3.1"
             const val logback = "ch.qos.logback:logback-classic:$logback_version"
         }
-    }
-
-    object SqlDelight {
-        const val version = "1.5.1"
-        const val runtime = "com.squareup.sqldelight:runtime:$version"
-        const val android = "com.squareup.sqldelight:android-driver:$version"
-        const val ios = "com.squareup.sqldelight:native-driver:$version"
-        const val coroutines_ktx = "com.squareup.sqldelight:coroutines-extensions:$version"
-    }
-
-    object MultipaltformSettings {
-        private const val version = "0.7.7"
-        const val no_args = "com.russhwolf:multiplatform-settings-no-arg:$version"
-    }
-
-    object Maps {
-        const val core = "com.google.android.libraries.maps:maps:3.1.0-beta"
-        const val ktx = "com.google.maps.android:maps-v3-ktx:3.0.1"
     }
 
     object Koin {

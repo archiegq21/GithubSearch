@@ -57,6 +57,7 @@ dependencies {
 kotlin {
     android()
     ios()
+    iosSimulatorArm64()
 
     version = "1.0"
     cocoapods {

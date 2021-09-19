@@ -1,17 +1,12 @@
-//
-//  iosAppApp.swift
-//  Shared
-//
-//  Created by Archie Quinones on 9/19/21.
-//
-
 import SwiftUI
 
 @main
 struct GithubSearchApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SearchView()
         }
     }
 }
