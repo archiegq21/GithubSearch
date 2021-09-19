@@ -60,7 +60,7 @@ kotlin {
 
     version = "1.0"
     cocoapods {
-        ios.deploymentTarget = "15"
+        ios.deploymentTarget = "14"
         summary = "Common Library"
         homepage = "https://quibbly.com"
     }
